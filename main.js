@@ -1,23 +1,42 @@
 const api_Key = `170dea74e7a84e23bddd61f3f824eb1a`;
 const nullImageURL = "https://resource.rentcafe.com/image/upload/q_auto,f_auto,c_limit,w_576,h_500/s3/2/50552/image%20not%20available(26).jpg"; 
-const keyword = '데이식스';
+// const keyword = '데이식스';
 const PAGE_SIZE = 20;
 let newsList = [];
-const getLatestNew = async ()=> {
-  // const url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${api_Key}`);
-  const url = new URL(`https://noonaproject-newstimes.netlify.app/top-headlines`);
-  // const url = new URL(`https://noona-times-v2.netlify.app/top-headlines`);
-  //?q=${keyword}&country=kr&pageSize=${PAGE_SIZE}
+
+const getNews = async(url)=> {
   const response = await fetch(url);
   const data = await response.json();
   newsList = data.articles;
-  // console.log(newsList);
   render();
 }
+
+const getNewsByCategory = async(event)=> {
+  const targetValue = event.target.textContent.toLowerCase();
+  // const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&category=${targetValue}&apiKey=${api_Key}`);
+  const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?category=${targetValue}`);
+  getNews(url);
+}
+
+const getNewsByKeyword = async(event)=> {
+  const keyword = document.getElementById("search-input").value;
+  // const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&q=${keyword}&apiKey=${api_Key}`);
+  const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?q=${keyword}`);
+  getNews(url);
+}
+
+const menus = document.querySelectorAll(".menu-area button")
+menus.forEach(menu=> menu.addEventListener("click", getNewsByCategory))
+
+const getLatestNew = async()=> {
+  // const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&apiKey=${api_Key}`);
+  const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines`);
+  getNews(url);
+}
+
 const render = ()=> {
   const newsHTML = newsList.map(
-    (news)=> 
-      `<div class="row news">
+    (news)=> `<div class="row news">
       <div class="col-lg-4">
         <img class="news-img-size" src="${news.urlToImage == null ? nullImageURL : news.urlToImage == "[Removed]" ? nullImageURL : news.urlToImage}"/>
       </div>
@@ -48,3 +67,4 @@ function textLenOverCut(txt, length = 200) {
   }
   return result;
 };
+
