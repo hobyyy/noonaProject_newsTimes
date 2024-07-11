@@ -62,7 +62,7 @@ menus.forEach(menu=> menu.addEventListener("click", getNewsByCategory))
 
 const getLatestNew = async()=> {
   // const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&apiKey=${apiKey}`);
-  const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines`);
+  const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?page=1&pageSize=20`);
   getNews(url);
 }
 
@@ -75,7 +75,7 @@ const render = ()=> {
       <div class="col-lg-8">
         <h2>${news.title}</h2>
         <p>
-          ${news.description == null ? "내용없음" : news.description == "[Removed]" ? "내용없음" : textLenOverCut(news.description, length = 200)}
+          ${news.description == null ? "내용없음" : news.description == "[Removed]" ? "내용없음" : news.description == "" ? "내용없음" : textLenOverCut(news.description, length = 200)}
         </p>
         <div>
           ${news.source.name == null ? "no source" : news.source.name == "[Removed]" ? "no source" : news.source.name} * ${moment(news.publishedAt).fromNow()}
@@ -121,7 +121,7 @@ const paginationRender = ()=> {
 
   let paginationHTML = ``;
   document.getElementById("page-num-area").innerHTML
-  console.log('pageHTML', document.getElementById("page-num-area").innerHTML)
+  // console.log('pageHTML', document.getElementById("page-num-area").innerHTML)
 
 }
 
