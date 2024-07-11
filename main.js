@@ -1,27 +1,46 @@
-const api_Key = `170dea74e7a84e23bddd61f3f824eb1a`;
+const apiKey = `170dea74e7a84e23bddd61f3f824eb1a`;
 const nullImageURL = "https://resource.rentcafe.com/image/upload/q_auto,f_auto,c_limit,w_576,h_500/s3/2/50552/image%20not%20available(26).jpg"; 
 // const keyword = '데이식스';
-const PAGE_SIZE = 20;
 let newsList = [];
+//pagination 관련 value
+let totalResults = 0;
+const pageSize = 20;
+const pageGroupSize = 5;
+let pageNow = 1;
+
 
 const getNews = async(url)=> {
-  const response = await fetch(url);
-  const data = await response.json();
-  newsList = data.articles;
-  render();
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    console.log('data', data)
+
+    if(response.status===200) {
+      if(data.articles.length===0) {
+        throw new Error("No result for this search")
+      }
+      newsList = data.articles;
+      totalResults = data.totalResults;
+      render();
+    }else {
+      throw new Error(data.message)
+    }
+  } catch (error) {
+    errorRender(error.message);
+  }
 }
 
 const getNewsByCategory = async(event)=> {
   const targetValue = event.target.textContent.toLowerCase();
-  // const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&category=${targetValue}&apiKey=${api_Key}`);
-  const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?category=${targetValue}`);
+  const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&category=${targetValue}&apiKey=${apiKey}`);
+  // const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?category=${targetValue}`);
   getNews(url);
 }
 
 const getNewsByKeyword = async(event)=> {
   const keyword = document.getElementById("search-input").value;
-  // const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&q=${keyword}&apiKey=${api_Key}`);
-  const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?q=${keyword}`);
+  const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&q=${keyword}&apiKey=${apiKey}`);
+  // const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?q=${keyword}`);
   getNews(url);
 }
 
@@ -29,8 +48,8 @@ const menus = document.querySelectorAll(".menu-area button")
 menus.forEach(menu=> menu.addEventListener("click", getNewsByCategory))
 
 const getLatestNew = async()=> {
-  // const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&apiKey=${api_Key}`);
-  const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines`);
+  const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&apiKey=${apiKey}`);
+  // const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines`);
   getNews(url);
 }
 
@@ -55,9 +74,23 @@ const render = ()=> {
   // console.log(document.getElementById("news-board").innerHTML )
   document.getElementById("news-board").innerHTML = newsHTML;
 }
-getLatestNew();
- 
-function textLenOverCut(txt, length = 200) {
+
+const errorRender = (message)=>{
+  const errorHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+    <symbol id="exclamation-triangle-fill" width="50" viewBox="0 0 16 16">
+      <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+    </symbol>
+  </svg>
+
+  <div class="alert alert-danger d-flex align-items-center" role="alert">
+    <svg class="bi flex-shrink-0 me-2" width="50" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+    <div>${message}</div>
+  </div>`;
+
+  document.getElementById("news-board").innerHTML = errorHTML;
+}
+  
+const textLenOverCut = (txt, length = 200)=> {
   let result = '';
   if (txt.length > length) {
     result = txt.substr(0, length) + '...';
@@ -67,4 +100,18 @@ function textLenOverCut(txt, length = 200) {
   }
   return result;
 };
+  
+const paginationRender = ()=> {
+  const totalPage = Math.ceil(totalResults/pageGroupSize);
+  let pageGroupNow = Math.ceil(pageNow/pageGroupSize);
+  let lastPage = pageGroupNow*pageGroupSize;
+  let firstPage = lastPage - (pageGroupSize-1);
+
+  let paginationHTML = ``;
+  document.getElementById("page-num-area").innerHTML
+  console.log('pageHTML', document.getElementById("page-num-area").innerHTML)
+
+}
+getLatestNew();
+paginationRender();
 

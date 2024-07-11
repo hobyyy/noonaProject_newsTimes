@@ -30,3 +30,17 @@
 .news-img-size {
   max-width: 100%;
 }
+.d-none {
+ width: 50px;
+}
+.error-icon {
+  width: 50px;
+}
+.pagination-area {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+#page-num-area {
+  display: flex;
+}
