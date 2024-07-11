@@ -60,7 +60,7 @@
 #page-num-area {
   display: flex;
 }
-.hidden-search{
+.hidden-search, .mobile-menu-close{
   display: none;
 }
 
