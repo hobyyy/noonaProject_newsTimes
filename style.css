@@ -6,6 +6,22 @@
 .head-line svg {
   width: 430px;
 }
+.search-area { 
+  display: flex;
+  margin-top: 8px; 
+}
+.search-area button {
+  border: 1px solid rgb(118, 118, 118);
+  border-radius: 2px;
+}
+.mobile-menu-toggle {
+  display: none;
+  font-size: 30px;
+}
+.search-icon {
+  font-size: 30px;
+  margin-right: 10px;
+}
 .menu-area {
   margin-top: 1em;
   display: flex;
@@ -43,4 +59,44 @@
 }
 #page-num-area {
   display: flex;
+}
+.hidden-search{
+  display: none;
+}
+
+@media (max-width: 575px) {
+  .mobile-menu-toggle {
+    display: block;
+    margin-right: 10px;
+  }
+  .menu-area {
+    position: fixed;
+    margin: 0;
+    top: 0;
+    left: -100%;
+    height: 100%;
+    background-color: #333;
+    width: 80vw;
+    padding: 20px;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    transition: 0.5s;
+  }
+  .mobile-menu-close {
+    display: block;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    color: #fff;
+    font-size: 20px
+  }
+  .menu-area button:hover {
+    background-color: none;
+    color: #fff;
+  }
 }

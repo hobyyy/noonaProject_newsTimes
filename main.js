@@ -2,6 +2,18 @@ const apiKey = `170dea74e7a84e23bddd61f3f824eb1a`;
 const nullImageURL = "https://resource.rentcafe.com/image/upload/q_auto,f_auto,c_limit,w_576,h_500/s3/2/50552/image%20not%20available(26).jpg"; 
 // const keyword = '데이식스';
 let newsList = [];
+
+// menu toggle 관련 value
+let hamburgerButton = document.querySelector('.mobile-menu-toggle');
+let closeButton = document.querySelector('.mobile-menu-close');
+let menuGroup = document.querySelector('.menu-area');
+
+let menuSlideOn = () =>  menuGroup.style.left = '0';
+let menuSlideOff = () => menuGroup.style.left = '-100%';
+
+hamburgerButton.addEventListener("click", menuSlideOn);
+closeButton.addEventListener("click", menuSlideOff);
+
 //pagination 관련 value
 let totalResults = 0;
 const pageSize = 20;
@@ -31,16 +43,17 @@ const getNews = async(url)=> {
 }
 
 const getNewsByCategory = async(event)=> {
+  menuSlideOff();
   const targetValue = event.target.textContent.toLowerCase();
-  const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&category=${targetValue}&apiKey=${apiKey}`);
-  // const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?category=${targetValue}`);
+  // const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&category=${targetValue}&apiKey=${apiKey}`);
+  const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?category=${targetValue}`);
   getNews(url);
 }
 
 const getNewsByKeyword = async(event)=> {
   const keyword = document.getElementById("search-input").value;
-  const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&q=${keyword}&apiKey=${apiKey}`);
-  // const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?q=${keyword}`);
+  // const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&q=${keyword}&apiKey=${apiKey}`);
+  const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?q=${keyword}`);
   getNews(url);
 }
 
@@ -48,8 +61,8 @@ const menus = document.querySelectorAll(".menu-area button")
 menus.forEach(menu=> menu.addEventListener("click", getNewsByCategory))
 
 const getLatestNew = async()=> {
-  const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&apiKey=${apiKey}`);
-  // const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines`);
+  // const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&apiKey=${apiKey}`);
+  const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines`);
   getNews(url);
 }
 
@@ -71,7 +84,6 @@ const render = ()=> {
     </div>
     `
   ).join('');
-  // console.log(document.getElementById("news-board").innerHTML )
   document.getElementById("news-board").innerHTML = newsHTML;
 }
 
@@ -111,6 +123,15 @@ const paginationRender = ()=> {
   document.getElementById("page-num-area").innerHTML
   console.log('pageHTML', document.getElementById("page-num-area").innerHTML)
 
+}
+
+const clickSearch = ()=> {
+  console.log('clickSearch',document.querySelectorAll(".hidden-search"))
+  document.querySelectorAll(".hidden-search").forEach((event)=> {
+    console.log('event',event.style.display)
+    if(event.style.display == '') event.style.display = 'block';
+    else event.style.display = '';
+  })
 }
 getLatestNew();
 paginationRender();
