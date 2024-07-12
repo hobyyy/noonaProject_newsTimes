@@ -14,13 +14,13 @@ let menuSlideOff = () => menuGroup.style.left = '-100%';
 hamburgerButton.addEventListener("click", menuSlideOn);
 closeButton.addEventListener("click", menuSlideOff);
 
-//pagination 관련 value
+// pagination 관련 value
 let totalResults = 0;
 const pageSize = 20;
 const pageGroupSize = 5;
 let pageNow = 1;
 
-
+// 뉴스데이터 받아오는 함수
 const getNews = async(url)=> {
   try {
     const response = await fetch(url);
@@ -29,7 +29,7 @@ const getNews = async(url)=> {
 
     if(response.status===200) {
       if(data.articles.length===0) {
-        throw new Error("No result for this search")
+        throw new Error("No matches for your search")
       }
       newsList = data.articles;
       totalResults = data.totalResults;
@@ -42,6 +42,8 @@ const getNews = async(url)=> {
   }
 }
 
+// 카테고리별 검색함수
+// 상단 메뉴 카테고리 클릭시 url setting & getNews() 호출
 const getNewsByCategory = async(event)=> {
   menuSlideOff();
   const targetValue = event.target.textContent.toLowerCase();
@@ -50,6 +52,8 @@ const getNewsByCategory = async(event)=> {
   await getNews(url);
 }
 
+// 키워드별 검색함수
+// 좌측 상단 키워드 입력후 검색시 url setting & getNews() 호출
 const getNewsByKeyword = async(event)=> {
   const keyword = document.getElementById("search-input").value;
   const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&q=${keyword}&apiKey=${apiKey}`);
@@ -57,12 +61,14 @@ const getNewsByKeyword = async(event)=> {
   await getNews(url);
 }
 
+// 화면 첫 로딩시 최근뉴스 셋팅함수
 const getLatestNews = async()=> {
   const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&apiKey=${apiKey}`);
   // const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?page=1&pageSize=20`);
   await getNews(url);
 }
 
+// UI에 render하는 함수
 const render = ()=> {
   const newsHTML = newsList.map(
     (news)=> `<div class="row news">
@@ -84,6 +90,7 @@ const render = ()=> {
   document.getElementById("news-board").innerHTML = newsHTML;
 }
 
+// error화면을 UI에 render하는 함수
 const errorRender = (message)=>{
   const errorHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="d-none">
     <symbol id="exclamation-triangle-fill" width="50" viewBox="0 0 16 16">
@@ -122,6 +129,7 @@ const clickSearch = ()=> {
   })
 }
 
+// paging을 render하는 함수
 const paginationRender = ()=> {
   const totalPage = Math.ceil(totalResults/pageGroupSize);
   let pageGroupNow = Math.ceil(pageNow/pageGroupSize);
