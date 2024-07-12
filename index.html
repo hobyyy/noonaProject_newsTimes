@@ -18,7 +18,7 @@
       <section>
         <div class="search-area">
           <i class="fa-solid fa-bars mobile-menu-toggle"></i>
-          <i class="fa-solid fa-magnifying-glass search-icon" onclick="clickSearch()"></i>
+          <i class="fa-solid fa-magnifying-glass search-icon" onclick="onclickSearch()"></i>
           <input class="hidden-search" id="search-input" type="text"/>
           <button class="hidden-search" onclick="getNewsByKeyword()">search</button>
         </div>
@@ -59,25 +59,32 @@
       <section class="pagination-area">
         <nav aria-label="Page navigation example">
           <ul class="pagination">
-            <li class="page-item">
-              <a class="page-link" aria-label="Previous">
+            <!-- <li class="page-item ">
+              <a class="page-link first-hidden" aria-label="PreviousGroup">
                 <span aria-hidden="true">&laquo;</span>
               </a>
             </li>
-            <span id="page-num-area">
-              <!-- <li class="page-item"><a class="page-link">1</a></li>
-              <li class="page-item"><a class="page-link">2</a></li>
-              <li class="page-item"><a class="page-link">3</a></li> -->
-            </span>
             <li class="page-item">
-              <a class="page-link" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
+              <a class="page-link first-hidden" aria-label="Previous" onclick="onclickPage()">
+                <span aria-hidden="true">&lsaquo;</span>
+              </a>
+            </li> -->
+            
+            <!-- <li class="page-item">
+              <a class="page-link last-hidden" aria-label="Next" onclick="onclickPage()">
+                <span aria-hidden="true">&rsaquo;</span>
               </a>
             </li>
+            <li class="page-item">
+              <a class="page-link last-hidden" aria-label="NextGroup">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li> -->
           </ul>
         </nav>
       </section>
     </section>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.0/moment.min.js"></script>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
