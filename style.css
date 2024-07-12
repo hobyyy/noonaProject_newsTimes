@@ -60,10 +60,22 @@
 #page-num-area {
   display: flex;
 }
+.first-hidden {
+  display: block;
+}
+.last-hidden {
+  display: block;
+}
 .hidden-search, .mobile-menu-close{
   display: none;
 }
-
+.page-link {
+  color: black;
+}
+.active>.page-link, .page-link.active {
+  background-color: #333;
+  border-color: #333;
+}
 @media (max-width: 575px) {
   .mobile-menu-toggle {
     display: block;
