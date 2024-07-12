@@ -45,25 +45,22 @@ const getNews = async(url)=> {
 const getNewsByCategory = async(event)=> {
   menuSlideOff();
   const targetValue = event.target.textContent.toLowerCase();
-  // const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&category=${targetValue}&apiKey=${apiKey}`);
-  const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?category=${targetValue}`);
-  getNews(url);
+  const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&category=${targetValue}&apiKey=${apiKey}`);
+  // const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?category=${targetValue}`);
+  await getNews(url);
 }
 
 const getNewsByKeyword = async(event)=> {
   const keyword = document.getElementById("search-input").value;
-  // const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&q=${keyword}&apiKey=${apiKey}`);
-  const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?q=${keyword}`);
-  getNews(url);
+  const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&q=${keyword}&apiKey=${apiKey}`);
+  // const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?q=${keyword}`);
+  await getNews(url);
 }
 
-const menus = document.querySelectorAll(".menu-area button")
-menus.forEach(menu=> menu.addEventListener("click", getNewsByCategory))
-
-const getLatestNew = async()=> {
-  // const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&apiKey=${apiKey}`);
-  const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?page=1&pageSize=20`);
-  getNews(url);
+const getLatestNews = async()=> {
+  const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&apiKey=${apiKey}`);
+  // const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?page=1&pageSize=20`);
+  await getNews(url);
 }
 
 const render = ()=> {
@@ -101,7 +98,8 @@ const errorRender = (message)=>{
 
   document.getElementById("news-board").innerHTML = errorHTML;
 }
-  
+
+// text의 길이가 length의 길이보다 크면 나머지 글자들은 ...으로 대체
 const textLenOverCut = (txt, length = 200)=> {
   let result = '';
   if (txt.length > length) {
@@ -112,7 +110,18 @@ const textLenOverCut = (txt, length = 200)=> {
   }
   return result;
 };
-  
+
+// 돋보기 Btn 클릭시 실행되는 함수
+// 돋보기 Btn 클릭시 input-box와 검색 Btn이 보였다가 사라졌다가 하는 기능
+const clickSearch = ()=> {
+  console.log('clickSearch',document.querySelectorAll(".hidden-search"))
+  document.querySelectorAll(".hidden-search").forEach((event)=> {
+    console.log('event',event.style.display)
+    if(event.style.display == '') event.style.display = 'block';
+    else event.style.display = '';
+  })
+}
+
 const paginationRender = ()=> {
   const totalPage = Math.ceil(totalResults/pageGroupSize);
   let pageGroupNow = Math.ceil(pageNow/pageGroupSize);
@@ -122,17 +131,12 @@ const paginationRender = ()=> {
   let paginationHTML = ``;
   document.getElementById("page-num-area").innerHTML
   // console.log('pageHTML', document.getElementById("page-num-area").innerHTML)
-
 }
 
-const clickSearch = ()=> {
-  console.log('clickSearch',document.querySelectorAll(".hidden-search"))
-  document.querySelectorAll(".hidden-search").forEach((event)=> {
-    console.log('event',event.style.display)
-    if(event.style.display == '') event.style.display = 'block';
-    else event.style.display = '';
-  })
-}
-getLatestNew();
+const menus = document.querySelectorAll(".menu-area button")
+menus.forEach(menu=> menu.addEventListener("click", getNewsByCategory))
+
+
+getLatestNews();
 paginationRender();
 
