@@ -1,6 +1,5 @@
 const apiKey = `170dea74e7a84e23bddd61f3f824eb1a`;
 const nullImageURL = "https://resource.rentcafe.com/image/upload/q_auto,f_auto,c_limit,w_576,h_500/s3/2/50552/image%20not%20available(26).jpg"; 
-// const keyword = '데이식스';
 let newsList = [];
 
 // menu toggle 관련 value
@@ -16,13 +15,17 @@ closeButton.addEventListener("click", menuSlideOff);
 
 // pagination 관련 value
 let totalResults = 0;
-const pageSize = 20;
+const pageSize = 10;
 const pageGroupSize = 5;
 let pageNow = 1;
+let groupNum = 1;
+let pageGroupNow = Math.ceil(pageNow/pageGroupSize);
 
 // 뉴스데이터 받아오는 함수
 const getNews = async(url)=> {
   try {
+    url.searchParams.set("page",pageNow);       // &page=${pageNow}
+    url.searchParams.set("pageSize",pageSize);  // &pageSize=${pageSize}
     const response = await fetch(url);
     const data = await response.json();
     console.log('data', data)
@@ -47,8 +50,8 @@ const getNews = async(url)=> {
 const getNewsByCategory = async(event)=> {
   menuSlideOff();
   const targetValue = event.target.textContent.toLowerCase();
-  const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&category=${targetValue}&apiKey=${apiKey}`);
-  // const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?category=${targetValue}`);
+  // const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&category=${targetValue}&apiKey=${apiKey}`);
+  const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?&category=${targetValue}`);
   await getNews(url);
 }
 
@@ -56,15 +59,15 @@ const getNewsByCategory = async(event)=> {
 // 좌측 상단 키워드 입력후 검색시 url setting & getNews() 호출
 const getNewsByKeyword = async(event)=> {
   const keyword = document.getElementById("search-input").value;
-  const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&q=${keyword}&apiKey=${apiKey}`);
-  // const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?q=${keyword}`);
+  // const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr}&q=${keyword}&apiKey=${apiKey}`);
+  const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?q=${keyword}`);
   await getNews(url);
 }
 
 // 화면 첫 로딩시 최근뉴스 셋팅함수
 const getLatestNews = async()=> {
-  const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&apiKey=${apiKey}`);
-  // const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?page=1&pageSize=20`);
+  // const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&apiKey=${apiKey}`);
+  const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines`);
   await getNews(url);
 }
 
@@ -120,34 +123,69 @@ const textLenOverCut = (txt, length = 200)=> {
 
 // 돋보기 Btn 클릭시 실행되는 함수
 // 돋보기 Btn 클릭시 input-box와 검색 Btn이 보였다가 사라졌다가 하는 기능
-const clickSearch = ()=> {
-  console.log('clickSearch',document.querySelectorAll(".hidden-search"))
+const onclickSearch = ()=> {
   document.querySelectorAll(".hidden-search").forEach((event)=> {
-    console.log('event',event.style.display)
+    // console.log('event',event.style.display)
     if(event.style.display == '') event.style.display = 'block';
     else event.style.display = '';
   })
 }
+// 페이지 클릭시 실행되는 함수
+const onclickPage = async(pageNum)=> {
+  pageNow = pageNum;
+  paginationRender();
+  pageRLbuttonRender();
+  await getLatestNews();
+}
+
+// page의 첫번째 그룹과 마지막 그룹의 << < > >> 을 지워주는 함수 
+const pageRLbuttonRender = ()=> {
+  if(pageGroupNow===1) {
+    document.querySelectorAll(".first-hidden").forEach((event)=> {
+      event.style.display = 'none';
+    })
+  }
+  if(pageGroupNow===groupNum) {
+    document.querySelectorAll(".last-hidden").forEach((event)=> {
+      event.style.display = 'none';
+    })
+  }
+}
 
 // paging을 render하는 함수
 const paginationRender = ()=> {
-  const totalPage = Math.ceil(totalResults/pageGroupSize);
-  let pageGroupNow = Math.ceil(pageNow/pageGroupSize);
-  
-  // let lastPage = pageGroupNow*pageGroupSize;
-  let lastPage = totalPage < pageGroupSize ? totalPage : pageGroupNow*pageGroupSize;
+  // console.log('pageNow', pageNow)
+  const totalPage = Math.ceil(totalResults/pageSize);
+  groupNum = Math.ceil(totalPage/pageGroupSize);
+  pageGroupNow = Math.ceil(pageNow/pageGroupSize);
 
-  let firstPage = lastPage - (pageGroupSize-1);
+  let lastPage = totalPage < pageGroupSize ? totalPage : totalPage < pageGroupNow*pageGroupSize ? totalPage : pageGroupNow*pageGroupSize;
+  let firstPage = lastPage <= (pageGroupSize-1) ? 1 : lastPage - (pageGroupSize-1);
 
-  let paginationHTML = ``;
-  
-  for(i=1;i<lastPage;i++) {
-    `<li class="page-item"><a class="page-link">${i}</a></li>`
+  let paginationHTML = `            <li class="page-item ">
+  <a class="page-link first-hidden" aria-label="PreviousFirst" onclick="onclickPage(1)">
+    <span aria-hidden="true">&laquo;</span>
+  </a>
+</li>
+<li class="page-item">
+  <a class="page-link first-hidden" aria-label="Previous" onclick="onclickPage(${pageNow-1>0 ? pageNow-1 : 1})">
+    <span aria-hidden="true">&lsaquo;</span>
+  </a>
+</li>`;
+  for(i=firstPage;i<=lastPage;i++) {
+    paginationHTML += `<li class="page-item ${i===pageNow ? "active" : ""}"><a class="page-link" onclick="onclickPage(${i})">${i}</a></li>`;
   }
-  
-  document.getElementById("page-num-area").innerHTML += paginationHTML;
-  
-  // console.log('pageHTML', document.getElementById("page-num-area").innerHTML)
+  paginationHTML += `            <li class="page-item">
+  <a class="page-link last-hidden" aria-label="Next" onclick="onclickPage(${pageNow+1<totalPage? pageNow+1 : totalPage})">
+    <span aria-hidden="true">&rsaquo;</span>
+  </a>
+</li>
+<li class="page-item">
+  <a class="page-link last-hidden" aria-label="NextEnd" onclick="onclickPage(${totalPage})">
+    <span aria-hidden="true">&raquo;</span>
+  </a>
+</li>`
+  document.querySelector(".pagination").innerHTML = paginationHTML;
 }
 
 const menus = document.querySelectorAll(".menu-area button")
@@ -157,6 +195,7 @@ menus.forEach(menu=> menu.addEventListener("click", getNewsByCategory))
 const init = async()=> {
   await getLatestNews();
   paginationRender();
+  pageRLbuttonRender();
 };
 
 init();
