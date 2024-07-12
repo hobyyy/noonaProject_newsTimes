@@ -125,11 +125,20 @@ const clickSearch = ()=> {
 const paginationRender = ()=> {
   const totalPage = Math.ceil(totalResults/pageGroupSize);
   let pageGroupNow = Math.ceil(pageNow/pageGroupSize);
-  let lastPage = pageGroupNow*pageGroupSize;
+  
+  // let lastPage = pageGroupNow*pageGroupSize;
+  let lastPage = totalPage < pageGroupSize ? totalPage : pageGroupNow*pageGroupSize;
+
   let firstPage = lastPage - (pageGroupSize-1);
 
   let paginationHTML = ``;
-  document.getElementById("page-num-area").innerHTML
+  
+  for(i=1;i<lastPage;i++) {
+    `<li class="page-item"><a class="page-link">${i}</a></li>`
+  }
+  
+  document.getElementById("page-num-area").innerHTML += paginationHTML;
+  
   // console.log('pageHTML', document.getElementById("page-num-area").innerHTML)
 }
 
@@ -137,6 +146,11 @@ const menus = document.querySelectorAll(".menu-area button")
 menus.forEach(menu=> menu.addEventListener("click", getNewsByCategory))
 
 
-getLatestNews();
-paginationRender();
+const init = async()=> {
+  await getLatestNews();
+  paginationRender();
+};
+
+init();
+
 
